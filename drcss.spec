@@ -1,5 +1,5 @@
 %define name    drcss
-%define version 2.0
+%define version 3.1.0.320
 %define release %mkrel 1
 
 Name:           %{name}
@@ -9,6 +9,7 @@ Summary:        Dell Remote Console Switch Software
 License:        Commercial
 Group:          Office
 Source0:        setup.bin
+Source1:        software.zip
 Requires:       java
 BuildRequires:  ImageMagick
 BuildArch:      noarch
@@ -26,10 +27,27 @@ control.
 
 %prep
 %setup -q -c -T
-# skip = (JREREALSIZE / 32768) + 1 + JRESTART
-dd if=%{SOURCE0} of=installer.zip bs=32768 skip=643 count=344
+eval $(grep "^BLOCKSIZE=" %{SOURCE0})
+eval $(grep "^JREREALSIZE=" %{SOURCE0})
+eval $(grep "^JRESTART=" %{SOURCE0})
+eval $(grep "^ARCHREALSIZE=" %{SOURCE0})
+eval $(grep "^RESSIZE=" %{SOURCE0})
+
+JRE_BLOCKS=`expr $JREREALSIZE / $BLOCKSIZE + 1`
+INSTALLER_BLOCKS=`expr $ARCHREALSIZE / $BLOCKSIZE + 1`
+
+dd if=%{SOURCE0} of=installer.zip \
+    bs=$BLOCKSIZE \
+    skip=`expr $JRESTART + $JRE_BLOCKS` \
+    count=$INSTALLER_BLOCKS
 unzip installer.zip
+dd if=%{SOURCE0} of=resource.zip \
+    bs=$BLOCKSIZE \
+    skip=`expr $JRESTART + $JRE_BLOCKS + $INSTALLER_BLOCKS` \
+    count=$RESSIZE
+unzip resource.zip
 %setup -D -T -n '%{name}-%{version}/$IA_PROJECT_DIR$
+unzip %{SOURCE1}
 
 %install
 rm -rf %{buildroot}
@@ -91,7 +109,7 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
-%doc src/license_en.txt
+%doc src/license_en.txt software.pdf
 %{_datadir}/drcss
 %{_bindir}/drcss
 %{_datadir}/icons/drcss.png
