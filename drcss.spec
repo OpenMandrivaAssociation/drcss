@@ -1,6 +1,6 @@
 %define name    drcss
 %define version 3.1.0.320
-%define release %mkrel 1
+%define release %mkrel 2
 
 Name:           %{name}
 Version:        %{version}
@@ -62,25 +62,8 @@ rm -f {buildroot}%{_datadir}/drcss/help_zg_ia_sf.jar
 
 cat > %{buildroot}%{_bindir}/drcss<< 'EOF'
 #!/bin/sh
-for jar in \
-    MibII.jar \
-    MibAvocentDs.jar \
-    hsqldb.jar \
-    brand.jar \
-    avctVideo.jar \
-    avctProtocols.jar \
-    avctAVWorksServices.jar \
-    avctAVWorksNmm.jar \
-    avctAVWorksGenericNmm.jar \
-    avctAVWorksExplorer.jar \
-    avctAVWorksAvrNmm.jar \
-    avctViewerApi.jar \
-    avctUtil.jar \
-    avctNet.jar \
-    avctGUI.jar \
-    avctDB.jar \
-    lax.jar; do
-    CLASSPATH="$CLASSPATH:%{_datadir}/drcss/$jar"
+for jar in %{_datadir}/drcss/*.jar; do
+    CLASSPATH="$CLASSPATH:$jar"
 done
 export CLASSPATH
 cd %{_datadir}/drcss
