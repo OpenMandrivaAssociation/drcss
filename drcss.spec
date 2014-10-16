@@ -1,6 +1,6 @@
 %define name    drcss
 %define version 3.1.0.320
-%define release %mkrel 2
+%define release 3
 
 Name:           %{name}
 Version:        %{version}
