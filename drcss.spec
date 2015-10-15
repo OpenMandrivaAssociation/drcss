@@ -1,6 +1,6 @@
 %define name    drcss
 %define version 3.1.0.320
-%define release 4
+%define release 5
 
 Name:           %{name}
 Version:        %{version}
@@ -11,7 +11,7 @@ Group:          Office
 Source0:        setup.bin
 Source1:        software.zip
 Requires:       java
-BuildRequires:  ImageMagick
+BuildRequires:  imagemagick
 BuildArch:      noarch
 BuildRoot:      %{_tmppath}/%{name}-%{version}
 
